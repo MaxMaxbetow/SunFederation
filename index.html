@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sun Federation</title>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body{
+    background: transparent;
+    color:#e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size:14px;
+    line-height:1.5;
+    overflow-x:hidden;
+  }
+
+  /* 🌠 Falling stars background */
+  #starsCanvas{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:-1;
+    background:
+      radial-gradient(1200px 800px at 40% 20%, rgba(255,255,255,0.06), transparent 55%),
+      radial-gradient(900px 600px at 70% 65%, rgba(255,255,255,0.04), transparent 60%),
+      #0b0b10;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 48px;
+    height:56px;
+    background:rgba(13,13,13,0.78);
+    backdrop-filter: blur(10px);
+    border-bottom:1px solid #1e1e1e;
+    position:sticky;
+    top:0;
+    z-index:100;
+  }
+
+  .nav-left{ display:flex; align-items:center; gap:20px; }
+  .brand{ font-size:15px; font-weight:600; color:#fff; }
+
+  .nav-pill{
+    background:#1a1a1a;
+    border:1px solid #2a2a2a;
+    color:#888;
+    font-size:12px;
+    padding:4px 12px;
+    border-radius:20px;
+  }
+
+  .nav-links{ display:flex; gap:28px; }
+  .nav-links a{ color:#777; font-size:14px; transition:color .15s; }
+  .nav-links a:hover{ color:#ddd; }
+
+  .nav-right{ display:flex; align-items:center; gap:10px; }
+
+  .nav-search{
+    width:200px;
+    background:rgba(20,20,20,0.92);
+    border:1px solid #1e1e1e;
+    border-radius:10px;
+    padding:7px 12px;
+    color:#ccc;
+    font-size:13px;
+    outline:none;
+    transition:border-color .15s, background .15s;
+  }
+  .nav-search:focus{ border-color:#2a2a2a; background:rgba(20,20,20,1); }
+  .nav-search::placeholder{ color:#666; }
+
+  .btn{
+    padding:7px 18px;
+    border-radius:8px;
+    font-size:13px;
+    font-weight:500;
+    cursor:pointer;
+    border:none;
+    transition:opacity .15s;
+    display:inline-block;
+    user-select:none;
+    white-space:nowrap;
+  }
+  .btn:hover{ opacity:.82; }
+  .btn-white{ background:#fff; color:#000; }
+  .btn-dark{ background:#1a1a1a; color:#bbb; border:1px solid #2a2a2a; }
+
+  .hero{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    max-width:1100px;
+    margin:0 auto;
+    padding:80px 48px;
+    gap:60px;
+  }
+
+  .hero-left{ flex:1; }
+
+  .hero h1{
+    font-size:44px;
+    font-weight:700;
+    color:#fff;
+    line-height:1.12;
+    margin-bottom:14px;
+  }
+
+  .hero p{
+    color:#666;
+    font-size:14px;
+    line-height:1.65;
+    margin-bottom:28px;
+    max-width:380px;
+  }
+
+  .hero-buttons{ display:flex; gap:10px; margin-bottom:24px; }
+
+  .info-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:rgba(20,20,20,0.92);
+    border:1px solid #1e1e1e;
+    border-radius:10px;
+    padding:10px 14px;
+    max-width:340px;
+  }
+
+  .info-row-icon{
+    width:30px; height:30px;
+    background:#222; border-radius:7px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:14px; font-weight:700; color:#888; flex-shrink:0;
+  }
+
+  .info-row-main{ font-size:13px; color:#bbb; }
+  .info-row-sub{ font-size:11px; color:#555; margin-top:1px; }
+
+  .info-row-plus{
+    margin-left:auto;
+    width:24px; height:24px;
+    background:#222; border-radius:6px;
+    display:flex; align-items:center; justify-content:center;
+    color:#666; font-size:16px; flex-shrink:0;
+  }
+
+  .hero-right{
+    width:360px; height:280px;
+    background:rgba(20,20,20,0.92);
+    border:1px solid #1e1e1e;
+    border-radius:16px;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#444;
+    font-size:13px;
+    letter-spacing:.02em;
+  }
+
+  /* SECTIONS */
+  .section{ max-width:1100px; margin:0 auto; padding:0 48px 72px; }
+  .section-alt{
+    background:rgba(10,10,10,0.65);
+    border-top:1px solid #181818;
+    border-bottom:1px solid #181818;
+    backdrop-filter: blur(10px);
+  }
+  .section-alt .section{ padding-top:60px; padding-bottom:60px; }
+
+  .section-title{
+    font-size:15px;
+    font-weight:600;
+    color:#fff;
+    margin-bottom:20px;
+  }
+
+  .cat-tabs{ display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+
+  .cat-tab{
+    padding:6px 16px;
+    border-radius:8px;
+    background:rgba(20,20,20,0.92);
+    border:1px solid #1e1e1e;
+    color:#777;
+    font-size:13px;
+    cursor:pointer;
+    transition: all .15s;
+  }
+  .cat-tab:hover{ color:#ccc; border-color:#2a2a2a; }
+  .cat-tab.active{ background:#fff; color:#000; border-color:#fff; }
+
+  .items-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap:10px;
+  }
+
+  .item-card{
+    background:rgba(20,20,20,0.92);
+    border:1px solid #1e1e1e;
+    border-radius:10px;
+    padding:16px;
+    transition:border-color .15s, transform .15s;
+  }
+  .item-card:hover{ border-color:#2a2a2a; transform: translateY(-1px); }
+
+  .item-tag{
+    display:inline-block;
+    font-size:10px;
+    padding:2px 7px;
+    border-radius:4px;
+    background:#1e1e1e;
+    color:#666;
+    border:1px solid #2a2a2a;
+    margin-bottom:8px;
+  }
+
+  .item-name{ font-size:13px; font-weight:500; color:#d0d0d0; margin-bottom:3px; }
+  .item-sub{ font-size:12px; color:#4a4a4a; margin-bottom:14px; }
+
+  .item-footer{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .item-price{ font-size:15px; font-weight:600; color:#fff; }
+  .item-price small{ font-size:11px; font-weight:400; color:#444; }
+
+  .item-btn{
+    background:#1e1e1e;
+    border:1px solid #2a2a2a;
+    color:#888;
+    padding:5px 12px;
+    border-radius:7px;
+    font-size:12px;
+    cursor:pointer;
+    transition: all .15s;
+    white-space:nowrap;
+  }
+  .item-btn:hover{ background:#fff; color:#000; border-color:#fff; }
+
+  .list-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap:8px;
+  }
+  .list-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:rgba(20,20,20,0.92);
+    border:1px solid #1e1e1e;
+    border-radius:8px;
+    padding:10px 14px;
+    transition:border-color .15s;
+  }
+  .list-row:hover{ border-color:#2a2a2a; }
+  .list-name{ font-size:13px; color:#bbb; }
+  .list-price{ font-size:13px; font-weight:600; color:#fff; white-space:nowrap; margin-left:10px; }
+
+  footer{
+    background:rgba(10,10,10,0.65);
+    border-top:1px solid #181818;
+    padding:48px;
+    backdrop-filter: blur(10px);
+  }
+  .footer-inner{
+    max-width:1100px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap:60px;
+  }
+
+  .footer-brand{ font-size:15px; font-weight:600; color:#fff; margin-bottom:10px; }
+  .footer-desc{ color:#444; font-size:13px; line-height:1.7; }
+  .footer-desc a{ color:#666; transition:color .15s; }
+  .footer-desc a:hover{ color:#ccc; }
+
+  .footer h4{
+    font-size:11px;
+    font-weight:600;
+    color:#555;
+    margin-bottom:14px;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+  }
+  .footer ul{ list-style:none; }
+  .footer ul li{ margin-bottom:9px; }
+  .footer ul li a{ color:#555; font-size:13px; transition:color .15s; }
+  .footer ul li a:hover{ color:#ccc; }
+
+  .footer-copy{
+    max-width:1100px;
+    margin:28px auto 0;
+    padding-top:24px;
+    border-top:1px solid #181818;
+    color:#333;
+    font-size:12px;
+  }
+
+  /* 🛒 Cart modal */
+  .modal-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background: rgba(0,0,0,0.72);
+    z-index:1000;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+  }
+  .modal{
+    width: min(420px, 100%);
+    background: rgba(20,20,20,0.96);
+    border:1px solid #1e1e1e;
+    border-radius:14px;
+    padding:18px;
+    backdrop-filter: blur(10px);
+  }
+  .modal-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:12px;
+  }
+  .modal-title{
+    font-size:14px;
+    font-weight:600;
+    color:#fff;
+  }
+  .icon-btn{
+    width:34px;
+    height:34px;
+    border-radius:10px;
+    background:#1a1a1a;
+    border:1px solid #2a2a2a;
+    color:#bbb;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition: opacity .15s;
+  }
+  .icon-btn:hover{ opacity:.82; }
+
+  .cart-list{
+    margin-top:10px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    max-height: 320px;
+    overflow:auto;
+    padding-right:4px;
+  }
+  .cart-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    background:#141414;
+    border:1px solid #1e1e1e;
+    border-radius:10px;
+    padding:10px 12px;
+  }
+  .cart-item-name{
+    font-size:13px;
+    color:#d0d0d0;
+    line-height:1.2;
+  }
+  .cart-item-sub{
+    font-size:11px;
+    color:#666;
+    margin-top:3px;
+  }
+  .cart-item-right{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .cart-price{
+    font-size:13px;
+    font-weight:600;
+    color:#fff;
+    white-space:nowrap;
+  }
+  .remove-btn{
+    padding:6px 10px;
+    border-radius:9px;
+    background:#1a1a1a;
+    border:1px solid #2a2a2a;
+    color:#bbb;
+    cursor:pointer;
+    font-size:12px;
+    transition: all .15s;
+  }
+  .remove-btn:hover{ background:#fff; color:#000; border-color:#fff; }
+
+  .cart-bottom{
+    margin-top:12px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    border-top:1px solid #1e1e1e;
+    padding-top:12px;
+  }
+  .total{
+    color:#bbb;
+    font-size:13px;
+  }
+  .total b{ color:#fff; }
+
+  .cart-actions{
+    margin-top:12px;
+    display:flex;
+    gap:10px;
+  }
+  .btn-wide{ flex:1; text-align:center; }
+
+  @media (max-width: 768px){
+    nav{ padding:0 20px; }
+    .nav-links{ display:none; }
+    .nav-search{ width: 150px; }
+    .hero{ flex-direction:column; padding:40px 20px; gap:28px; }
+    .hero h1{ font-size:30px; }
+    .hero-right{ width:100%; height:160px; }
+    .section{ padding-left:20px; padding-right:20px; }
+    footer{ padding:32px 20px; }
+    .footer-inner{ grid-template-columns:1fr; gap:28px; }
+  }
+</style>
+</head>
+
+<body>
+<canvas id="starsCanvas"></canvas>
+
+<nav>
+  <div class="nav-left">
+    <span class="brand">Sun Federation</span>
+    <span class="nav-pill">SunShield</span>
+  </div>
+
+  <div class="nav-links">
+    <a href="#shop">Снаряжение</a>
+    <a href="#enchants">Зачарования</a>
+    <a href="#resources">Ресурсы</a>
+    <a href="#potions">Зелья</a>
+  </div>
+
+  <div class="nav-right">
+    <input id="searchInput" class="nav-search" type="text" placeholder="Поиск по товарам…" />
+    <button class="btn btn-dark" onclick="openCart()">Корзина (<span id="cartCount">0</span>)</button>
+    <a href="https://chanland4.vercel.app" target="_blank" class="btn btn-white">Основной сайт</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-left">
+    <h1>Торговая<br>Федерация</h1>
+    <p>Магазин снаряжения, ресурсов и зачарований на сервере. Честные цены, быстрая сделка.</p>
+    <div class="hero-buttons">
+      <a href="#shop" class="btn btn-white">Открыть магазин</a>
+      <a href="https://chanland4.vercel.app" target="_blank" class="btn btn-dark">Основной сайт</a>
+    </div>
+
+    <div class="info-row">
+      <div class="info-row-icon">S</div>
+      <div>
+        <div class="info-row-main">Основной сайт федерации</div>
+        <div class="info-row-sub">chanland4.vercel.app</div>
+      </div>
+      <a href="https://chanland4.vercel.app" target="_blank" class="info-row-plus">+</a>
+    </div>
+  </div>
+  <div class="hero-right">Sun Federation</div>
+</div>
+
+<!-- SHOP -->
+<div id="shop" style="padding-top: 8px;">
+  <div class="section">
+    <div class="section-title">Снаряжение</div>
+
+    <div class="cat-tabs">
+      <button class="cat-tab active" onclick="filterCat(this,'all')">Все</button>
+      <button class="cat-tab" onclick="filterCat(this,'weapon')">Оружие</button>
+      <button class="cat-tab" onclick="filterCat(this,'armor')">Броня</button>
+      <button class="cat-tab" onclick="filterCat(this,'tool')">Инструменты</button>
+      <button class="cat-tab" onclick="filterCat(this,'other')">Прочее</button>
+    </div>
+
+    <div class="items-grid" id="eq-grid">
+      <div class="item-card" data-cat="weapon">
+        <div class="item-tag">Хит продаж</div>
+        <div class="item-name">Незеритовый меч (фулл зачар)</div>
+        <div class="item-sub">без починки</div>
+        <div class="item-footer">
+          <div class="item-price">80 <small>вон</small></div>
+          <button class="item-btn" data-name="Незеритовый меч (фулл зачар)" data-sub="без починки" data-price="80">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="weapon">
+        <div class="item-name">Незеритовый меч</div>
+        <div class="item-sub">базовый</div>
+        <div class="item-footer">
+          <div class="item-price">24 <small>вон</small></div>
+          <button class="item-btn" data-name="Незеритовый меч" data-sub="базовый" data-price="24">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="weapon">
+        <div class="item-name">Незеритовый топор</div>
+        <div class="item-sub">1 шт.</div>
+        <div class="item-footer">
+          <div class="item-price">21 <small>вон</small></div>
+          <button class="item-btn" data-name="Незеритовый топор" data-sub="1 шт." data-price="21">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="weapon">
+        <div class="item-name">Трезубец</div>
+        <div class="item-sub">1 шт.</div>
+        <div class="item-footer">
+          <div class="item-price">30 <small>вон</small></div>
+          <button class="item-btn" data-name="Трезубец" data-sub="1 шт." data-price="30">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="weapon">
+        <div class="item-tag">Редкое</div>
+        <div class="item-name">Булава</div>
+        <div class="item-sub">1 шт.</div>
+        <div class="item-footer">
+          <div class="item-price">60 <small>вон</small></div>
+          <button class="item-btn" data-name="Булава" data-sub="1 шт." data-price="60">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="weapon">
+        <div class="item-name">Лук (фулл зачар)</div>
+        <div class="item-sub">1 шт.</div>
+        <div class="item-footer">
+          <div class="item-price">8 <small>вон</small></div>
+          <button class="item-btn" data-name="Лук (фулл зачар)" data-sub="1 шт." data-price="8">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="armor">
+        <div class="item-tag">Топ зачар</div>
+        <div class="item-name">Незеритовый шлем</div>
+        <div class="item-sub">топ зачарования</div>
+        <div class="item-footer">
+          <div class="item-price">54 <small>вон</small></div>
+          <button class="item-btn" data-name="Незеритовый шлем" data-sub="топ зачарования" data-price="54">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="armor">
+        <div class="item-name">Незеритовый шлем</div>
+        <div class="item-sub">базовый</div>
+        <div class="item-footer">
+          <div class="item-price">24 <small>вон</small></div>
+          <button class="item-btn" data-name="Незеритовый шлем" data-sub="базовый" data-price="24">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="armor">
+        <div class="item-tag">Топ зачар</div>
+        <div class="item-name">Незеритовый нагрудник</div>
+        <div class="item-sub">топ зачарования</div>
+        <div class="item-footer">
+          <div class="item-price">86 <small>вон</small></div>
+          <button class="item-btn" data-name="Незеритовый нагрудник" data-sub="топ зачарования" data-price="86">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="armor">
+        <div class="item-name">Незеритовый нагрудник</div>
+        <div class="item-sub">базовый</div>
+        <div class="item-footer">
+          <div class="item-price">29 <small>вон</small></div>
+          <button class="item-btn" data-name="Незеритовый нагрудник" data-sub="базовый" data-price="29">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="armor">
+        <div class="item-tag">Топ зачар</div>
+        <div class="item-name">Незеритовые поножи</div>
+        <div class="item-sub">топ зачарования</div>
+        <div class="item-footer">
+          <div class="item-price">42 <small>вон</small></div>
+          <button class="item-btn" data-name="Незеритовые поножи" data-sub="топ зачарования" data-price="42">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="armor">
+        <div class="item-name">Незеритовые поножи</div>
+        <div class="item-sub">базовые</div>
+        <div class="item-footer">
+          <div class="item-price">26 <small>вон</small></div>
+          <button class="item-btn" data-name="Незеритовые поножи" data-sub="базовые" data-price="26">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="armor">
+        <div class="item-tag">Топ зачар</div>
+        <div class="item-name">Незеритовые ботинки</div>
+        <div class="item-sub">топ зачарования</div>
+        <div class="item-footer">
+          <div class="item-price">75 <small>вон</small></div>
+          <button class="item-btn" data-name="Незеритовые ботинки" data-sub="топ зачарования" data-price="75">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="armor">
+        <div class="item-name">Незеритовые ботинки</div>
+        <div class="item-sub">базовые</div>
+        <div class="item-footer">
+          <div class="item-price">23 <small>вон</small></div>
+          <button class="item-btn" data-name="Незеритовые ботинки" data-sub="базовые" data-price="23">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="armor">
+        <div class="item-name">Алмазный шлем</div>
+        <div class="item-sub">1 шт.</div>
+        <div class="item-footer">
+          <div class="item-price">2 <small>вон</small></div>
+          <button class="item-btn" data-name="Алмазный шлем" data-sub="1 шт." data-price="2">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="armor">
+        <div class="item-name">Алмазный нагрудник</div>
+        <div class="item-sub">1 шт.</div>
+        <div class="item-footer">
+          <div class="item-price">3 <small>вон</small></div>
+          <button class="item-btn" data-name="Алмазный нагрудник" data-sub="1 шт." data-price="3">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="armor">
+        <div class="item-name">Алмазные поножи</div>
+        <div class="item-sub">1 шт.</div>
+        <div class="item-footer">
+          <div class="item-price">2 <small>вон</small></div>
+          <button class="item-btn" data-name="Алмазные поножи" data-sub="1 шт." data-price="2">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="armor">
+        <div class="item-name">Алмазные ботинки</div>
+        <div class="item-sub">1 шт.</div>
+        <div class="item-footer">
+          <div class="item-price">2 <small>вон</small></div>
+          <button class="item-btn" data-name="Алмазные ботинки" data-sub="1 шт." data-price="2">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="tool">
+        <div class="item-tag">Топ зачар</div>
+        <div class="item-name">Незеритовая кирка</div>
+        <div class="item-sub">топ зачар, без починки</div>
+        <div class="item-footer">
+          <div class="item-price">40 <small>вон</small></div>
+          <button class="item-btn" data-name="Незеритовая кирка" data-sub="топ зачар, без починки" data-price="40">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="tool">
+        <div class="item-name">Незеритовая кирка</div>
+        <div class="item-sub">базовая</div>
+        <div class="item-footer">
+          <div class="item-price">25 <small>вон</small></div>
+          <button class="item-btn" data-name="Незеритовая кирка" data-sub="базовая" data-price="25">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="tool">
+        <div class="item-name">Алмазная кирка (фулл зачар)</div>
+        <div class="item-sub">без починки</div>
+        <div class="item-footer">
+          <div class="item-price">24 <small>вон</small></div>
+          <button class="item-btn" data-name="Алмазная кирка (фулл зачар)" data-sub="без починки" data-price="24">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="tool">
+        <div class="item-name">Незеритовая лопата</div>
+        <div class="item-sub">1 шт.</div>
+        <div class="item-footer">
+          <div class="item-price">21 <small>вон</small></div>
+          <button class="item-btn" data-name="Незеритовая лопата" data-sub="1 шт." data-price="21">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="tool">
+        <div class="item-name">Незеритовая мотыга</div>
+        <div class="item-sub">1 шт.</div>
+        <div class="item-footer">
+          <div class="item-price">20 <small>вон</small></div>
+          <button class="item-btn" data-name="Незеритовая мотыга" data-sub="1 шт." data-price="20">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="other">
+        <div class="item-name">Тотем бессмертия</div>
+        <div class="item-sub">1 шт.</div>
+        <div class="item-footer">
+          <div class="item-price">2 <small>вон</small></div>
+          <button class="item-btn" data-name="Тотем бессмертия" data-sub="1 шт." data-price="2">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="other">
+        <div class="item-name">Эндер-жемчуг</div>
+        <div class="item-sub">16 шт.</div>
+        <div class="item-footer">
+          <div class="item-price">4 <small>вон</small></div>
+          <button class="item-btn" data-name="Эндер-жемчуг" data-sub="16 шт." data-price="4">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="other">
+        <div class="item-name">Незеритовое улучшение</div>
+        <div class="item-sub">1 шт.</div>
+        <div class="item-footer">
+          <div class="item-price">7 <small>вон</small></div>
+          <button class="item-btn" data-name="Незеритовое улучшение" data-sub="1 шт." data-price="7">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card" data-cat="other">
+        <div class="item-name">Любая отделка (шаблон)</div>
+        <div class="item-sub">1 шт.</div>
+        <div class="item-footer">
+          <div class="item-price">10–15 <small>вон</small></div>
+          <button class="item-btn" data-name="Любая отделка (шаблон)" data-sub="1 шт." data-price="12.5">В корзину</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ENCHANTS -->
+<div class="section-alt" id="enchants">
+  <div class="section">
+    <div class="section-title">Зачарования</div>
+    <div class="list-grid">
+      <div class="list-row"><span class="list-name">Починка</span><span class="list-price">260 вон</span></div>
+      <div class="list-row"><span class="list-name">Проворство III</span><span class="list-price">450 вон</span></div>
+      <div class="list-row"><span class="list-name">Скорость души III</span><span class="list-price">15 вон</span></div>
+      <div class="list-row"><span class="list-name">Защита IV</span><span class="list-price">16 вон</span></div>
+      <div class="list-row"><span class="list-name">Шёлковое касание</span><span class="list-price">14 вон</span></div>
+      <div class="list-row"><span class="list-name">Прочность III</span><span class="list-price">16 вон</span></div>
+      <div class="list-row"><span class="list-name">Добыча III</span><span class="list-price">21 вон</span></div>
+      <div class="list-row"><span class="list-name">Острота V</span><span class="list-price">22 вон</span></div>
+      <div class="list-row"><span class="list-name">Удача III</span><span class="list-price">10 вон</span></div>
+      <div class="list-row"><span class="list-name">Шипы III</span><span class="list-price">23 вон</span></div>
+      <div class="list-row"><span class="list-name">Эффективность V</span><span class="list-price">15 вон</span></div>
+      <div class="list-row"><span class="list-name">Бесконечность</span><span class="list-price">10 вон</span></div>
+      <div class="list-row"><span class="list-name">Быстрая перезарядка III</span><span class="list-price">6 вон</span></div>
+      <div class="list-row"><span class="list-name">Везучий рыбак III</span><span class="list-price">8 вон</span></div>
+      <div class="list-row"><span class="list-name">Верность III</span><span class="list-price">8 вон</span></div>
+      <div class="list-row"><span class="list-name">Взрывоустойчивость IV</span><span class="list-price">10 вон</span></div>
+      <div class="list-row"><span class="list-name">Воспламенение</span><span class="list-price">6 вон</span></div>
+      <div class="list-row"><span class="list-name">Громовержец</span><span class="list-price">10 вон</span></div>
+      <div class="list-row"><span class="list-name">Заговор огня II</span><span class="list-price">10 вон</span></div>
+      <div class="list-row"><span class="list-name">Защита от снарядов IV</span><span class="list-price">8 вон</span></div>
+      <div class="list-row"><span class="list-name">Ледоход II</span><span class="list-price">10 вон</span></div>
+      <div class="list-row"><span class="list-name">Небесная кара V</span><span class="list-price">5 вон</span></div>
+      <div class="list-row"><span class="list-name">Невесомость IV</span><span class="list-price">25 вон</span></div>
+      <div class="list-row"><span class="list-name">Бич членистоногих V</span><span class="list-price">4 вон</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- RESOURCES -->
+<div id="resources">
+  <div class="section" style="padding-top: 60px;">
+    <div class="section-title">Ресурсы</div>
+    <div class="items-grid">
+      <div class="item-card">
+        <div class="item-name">Незеритовый слиток</div><div class="item-sub">1 шт.</div>
+        <div class="item-footer"><div class="item-price">23 <small>вон</small></div>
+          <button class="item-btn" data-name="Незеритовый слиток" data-sub="1 шт." data-price="23">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-name">Древние обломки</div><div class="item-sub">1 шт.</div>
+        <div class="item-footer"><div class="item-price">5 <small>вон</small></div>
+          <button class="item-btn" data-name="Древние обломки" data-sub="1 шт." data-price="5">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-name">Алмаз</div><div class="item-sub">3 шт.</div>
+        <div class="item-footer"><div class="item-price">1 <small>вон</small></div>
+          <button class="item-btn" data-name="Алмаз" data-sub="3 шт." data-price="1">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-name">Алмазный блок</div><div class="item-sub">16 шт.</div>
+        <div class="item-footer"><div class="item-price">48 <small>вон</small></div>
+          <button class="item-btn" data-name="Алмазный блок" data-sub="16 шт." data-price="48">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-name">Железо</div><div class="item-sub">64 шт.</div>
+        <div class="item-footer"><div class="item-price">1 <small>вон</small></div>
+          <button class="item-btn" data-name="Железо" data-sub="64 шт." data-price="1">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-name">Железный блок</div><div class="item-sub">64 шт.</div>
+        <div class="item-footer"><div class="item-price">7 <small>вон</small></div>
+          <button class="item-btn" data-name="Железный блок" data-sub="64 шт." data-price="7">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-name">Золото</div><div class="item-sub">64 шт.</div>
+        <div class="item-footer"><div class="item-price">3 <small>вон</small></div>
+          <button class="item-btn" data-name="Золото" data-sub="64 шт." data-price="3">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-name">Золотой блок</div><div class="item-sub">64 шт.</div>
+        <div class="item-footer"><div class="item-price">24 <small>вон</small></div>
+          <button class="item-btn" data-name="Золотой блок" data-sub="64 шт." data-price="24">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-name">Изумруд</div><div class="item-sub">64 шт.</div>
+        <div class="item-footer"><div class="item-price">1 <small>вон</small></div>
+          <button class="item-btn" data-name="Изумруд" data-sub="64 шт." data-price="1">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-name">Изумрудная руда</div><div class="item-sub">1 шт.</div>
+        <div class="item-footer"><div class="item-price">10 <small>вон</small></div>
+          <button class="item-btn" data-name="Изумрудная руда" data-sub="1 шт." data-price="10">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-name">Изумрудный блок</div><div class="item-sub">64 шт.</div>
+        <div class="item-footer"><div class="item-price">8 <small>вон</small></div>
+          <button class="item-btn" data-name="Изумрудный блок" data-sub="64 шт." data-price="8">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-name">Медь</div><div class="item-sub">64 шт.</div>
+        <div class="item-footer"><div class="item-price">1 <small>вон</small></div>
+          <button class="item-btn" data-name="Медь" data-sub="64 шт." data-price="1">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-name">Медный блок</div><div class="item-sub">64 шт.</div>
+        <div class="item-footer"><div class="item-price">4 <small>вон</small></div>
+          <button class="item-btn" data-name="Медный блок" data-sub="64 шт." data-price="4">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-name">Кварцевый блок</div><div class="item-sub">64 шт.</div>
+        <div class="item-footer"><div class="item-price">2 <small>вон</small></div>
+          <button class="item-btn" data-name="Кварцевый блок" data-sub="64 шт." data-price="2">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-name">Костяной блок</div><div class="item-sub">64 шт.</div>
+        <div class="item-footer"><div class="item-price">8 <small>вон</small></div>
+          <button class="item-btn" data-name="Костяной блок" data-sub="64 шт." data-price="8">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-name">Обсидиан</div><div class="item-sub">64 шт.</div>
+        <div class="item-footer"><div class="item-price">10 <small>вон</small></div>
+          <button class="item-btn" data-name="Обсидиан" data-sub="64 шт." data-price="10">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-name">Морской фонарь</div><div class="item-sub">64 шт.</div>
+        <div class="item-footer"><div class="item-price">5 <small>вон</small></div>
+          <button class="item-btn" data-name="Морской фонарь" data-sub="64 шт." data-price="5">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-name">Кристалл Края</div><div class="item-sub">16 шт.</div>
+        <div class="item-footer"><div class="item-price">12 <small>вон</small></div>
+          <button class="item-btn" data-name="Кристалл Края" data-sub="16 шт." data-price="12">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-tag">Редкое</div>
+        <div class="item-name">Зачарованное золотое яблоко</div><div class="item-sub">1 шт.</div>
+        <div class="item-footer"><div class="item-price">9 <small>вон</small></div>
+          <button class="item-btn" data-name="Зачарованное золотое яблоко" data-sub="1 шт." data-price="9">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-name">Золотое яблоко</div><div class="item-sub">16 шт.</div>
+        <div class="item-footer"><div class="item-price">8 <small>вон</small></div>
+          <button class="item-btn" data-name="Золотое яблоко" data-sub="16 шт." data-price="8">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-name">Золотая морковь</div><div class="item-sub">64 шт.</div>
+        <div class="item-footer"><div class="item-price">5 <small>вон</small></div>
+          <button class="item-btn" data-name="Золотая морковь" data-sub="64 шт." data-price="5">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-tag">Редкое</div>
+        <div class="item-name">Маяк</div><div class="item-sub">1 шт.</div>
+        <div class="item-footer"><div class="item-price">60 <small>вон</small></div>
+          <button class="item-btn" data-name="Маяк" data-sub="1 шт." data-price="60">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-name">Зелье опыта</div><div class="item-sub">1 шт.</div>
+        <div class="item-footer"><div class="item-price">1 <small>вон</small></div>
+          <button class="item-btn" data-name="Зелье опыта" data-sub="1 шт." data-price="1">В корзину</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- POTIONS -->
+<div class="section-alt" id="potions">
+  <div class="section">
+    <div class="section-title">Зелья и эффекты</div>
+    <div class="items-grid">
+      <div class="item-card"><div class="item-name">Зелье невидимости</div><div class="item-sub">1 шт.</div>
+        <div class="item-footer"><div class="item-price">3 <small>вон</small></div>
+          <button class="item-btn" data-name="Зелье невидимости" data-sub="1 шт." data-price="3">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card"><div class="item-name">Зелье ночного зрения</div><div class="item-sub">1 шт.</div>
+        <div class="item-footer"><div class="item-price">1 <small>вон</small></div>
+          <button class="item-btn" data-name="Зелье ночного зрения" data-sub="1 шт." data-price="1">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card"><div class="item-name">Зелье огнестойкости</div><div class="item-sub">1 шт.</div>
+        <div class="item-footer"><div class="item-price">1 <small>вон</small></div>
+          <button class="item-btn" data-name="Зелье огнестойкости" data-sub="1 шт." data-price="1">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card"><div class="item-name">Зелье опыта</div><div class="item-sub">2 шт.</div>
+        <div class="item-footer"><div class="item-price">2 <small>вон</small></div>
+          <button class="item-btn" data-name="Зелье опыта" data-sub="2 шт." data-price="2">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card"><div class="item-name">Зелье прыгучести</div><div class="item-sub">1 шт.</div>
+        <div class="item-footer"><div class="item-price">2 <small>вон</small></div>
+          <button class="item-btn" data-name="Зелье прыгучести" data-sub="1 шт." data-price="2">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card"><div class="item-name">Зелье регенерации</div><div class="item-sub">1 шт.</div>
+        <div class="item-footer"><div class="item-price">2 <small>вон</small></div>
+          <button class="item-btn" data-name="Зелье регенерации" data-sub="1 шт." data-price="2">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card"><div class="item-name">Зелье силы</div><div class="item-sub">1 шт.</div>
+        <div class="item-footer"><div class="item-price">3 <small>вон</small></div>
+          <button class="item-btn" data-name="Зелье силы" data-sub="1 шт." data-price="3">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card"><div class="item-name">Зелье стремительности</div><div class="item-sub">1 шт.</div>
+        <div class="item-footer"><div class="item-price">2 <small>вон</small></div>
+          <button class="item-btn" data-name="Зелье стремительности" data-sub="1 шт." data-price="2">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card"><div class="item-name">Зелье черепашьей мощи IV</div><div class="item-sub">1 шт.</div>
+        <div class="item-footer"><div class="item-price">7 <small>вон</small></div>
+          <button class="item-btn" data-name="Зелье черепашьей мощи IV" data-sub="1 шт." data-price="7">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card"><div class="item-name">Зловещая бутылочка I</div><div class="item-sub">2 шт.</div>
+        <div class="item-footer"><div class="item-price">2 <small>вон</small></div>
+          <button class="item-btn" data-name="Зловещая бутылочка I" data-sub="2 шт." data-price="2">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card"><div class="item-name">Зловещая бутылочка II</div><div class="item-sub">1 шт.</div>
+        <div class="item-footer"><div class="item-price">2 <small>вон</small></div>
+          <button class="item-btn" data-name="Зловещая бутылочка II" data-sub="1 шт." data-price="2">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card"><div class="item-name">Зловещая бутылочка III</div><div class="item-sub">1 шт.</div>
+        <div class="item-footer"><div class="item-price">4 <small>вон</small></div>
+          <button class="item-btn" data-name="Зловещая бутылочка III" data-sub="1 шт." data-price="4">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card"><div class="item-name">Зловещая бутылочка IV</div><div class="item-sub">1 шт.</div>
+        <div class="item-footer"><div class="item-price">6 <small>вон</small></div>
+          <button class="item-btn" data-name="Зловещая бутылочка IV" data-sub="1 шт." data-price="6">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card"><div class="item-name">Зловещая бутылочка V</div><div class="item-sub">1 шт.</div>
+        <div class="item-footer"><div class="item-price">8 <small>вон</small></div>
+          <button class="item-btn" data-name="Зловещая бутылочка V" data-sub="1 шт." data-price="8">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card"><div class="item-name">Зловещий ключ испытаний</div><div class="item-sub">1 шт.</div>
+        <div class="item-footer"><div class="item-price">5 <small>вон</small></div>
+          <button class="item-btn" data-name="Зловещий ключ испытаний" data-sub="1 шт." data-price="5">В корзину</button>
+        </div>
+      </div>
+
+      <div class="item-card"><div class="item-name">Ключ испытаний</div><div class="item-sub">1 шт.</div>
+        <div class="item-footer"><div class="item-price">2 <small>вон</small></div>
+          <button class="item-btn" data-name="Ключ испытаний" data-sub="1 шт." data-price="2">В корзину</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MISC -->
+<div>
+  <div class="section" style="padding-top: 60px;">
+    <div class="section-title">Красители и прочее</div>
+    <div class="list-grid">
+      <div class="list-row"><span class="list-name">Белый краситель (128 шт.)</span><span class="list-price">2 вон</span></div>
+      <div class="list-row"><span class="list-name">Жёлтый краситель (128 шт.)</span><span class="list-price">2 вон</span></div>
+      <div class="list-row"><span class="list-name">Красный краситель (128 шт.)</span><span class="list-price">2 вон</span></div>
+      <div class="list-row"><span class="list-name">Зелёный краситель (128 шт.)</span><span class="list-price">2 вон</span></div>
+      <div class="list-row"><span class="list-name">Бирюзовый краситель (128 шт.)</span><span class="list-price">4 вон</span></div>
+      <div class="list-row"><span class="list-name">Голубой краситель (64 шт.)</span><span class="list-price">2 вон</span></div>
+      <div class="list-row"><span class="list-name">Лаймовый краситель (64 шт.)</span><span class="list-price">2 вон</span></div>
+      <div class="list-row"><span class="list-name">Коричневый краситель (128 шт.)</span><span class="list-price">2 вон</span></div>
+      <div class="list-row"><span class="list-name">Кактус (128 шт.)</span><span class="list-price">1 вон</span></div>
+      <div class="list-row"><span class="list-name">Жареная рыба (64 шт.)</span><span class="list-price">2 вон</span></div>
+      <div class="list-row"><span class="list-name">Жареное мясо (64 шт.)</span><span class="list-price">2 вон</span></div>
+      <div class="list-row"><span class="list-name">Морковь (64 шт.)</span><span class="list-price">2 вон</span></div>
+      <div class="list-row"><span class="list-name">Хлеб (64 шт.)</span><span class="list-price">2 вон</span></div>
+      <div class="list-row"><span class="list-name">Золотой слиток (64 шт.)</span><span class="list-price">3 вон</span></div>
+      <div class="list-row"><span class="list-name">Золотое яблоко (16 шт.)</span><span class="list-price">5 вон</span></div>
+      <div class="list-row"><span class="list-name">Зачарованное золотое яблоко</span><span class="list-price">6 вон</span></div>
+      <div class="list-row"><span class="list-name">Блок мёда (16 шт.)</span><span class="list-price">4 вон</span></div>
+      <div class="list-row"><span class="list-name">Блок слизи (64 шт.)</span><span class="list-price">8 вон</span></div>
+      <div class="list-row"><span class="list-name">Блок света (32 шт.)</span><span class="list-price">6 вон</span></div>
+      <div class="list-row"><span class="list-name">Динамит (64 шт.)</span><span class="list-price">16 вон</span></div>
+      <div class="list-row"><span class="list-name">Драконье дыхание (16 шт.)</span><span class="list-price">8 вон</span></div>
+      <div class="list-row"><span class="list-name">Книга (64 шт.)</span><span class="list-price">4 вон</span></div>
+      <div class="list-row"><span class="list-name">Кожа (64 шт.)</span><span class="list-price">2 вон</span></div>
+      <div class="list-row"><span class="list-name">Незерский нарост (64 шт.)</span><span class="list-price">4 вон</span></div>
+      <div class="list-row"><span class="list-name">Лазурит (128 шт.)</span><span class="list-price">2 вон</span></div>
+      <div class="list-row"><span class="list-name">Лазуритовый блок (64 шт.)</span><span class="list-price">9 вон</span></div>
+      <div class="list-row"><span class="list-name">Малахитовая кварца (64 шт.)</span><span class="list-price">4 вон</span></div>
+      <div class="list-row"><span class="list-name">Пластинка PigStep</span><span class="list-price">150 вон</span></div>
+      <div class="list-row"><span class="list-name">Пластинка Relic</span><span class="list-price">150 вон</span></div>
+      <div class="list-row"><span class="list-name">Пластинка Aaron Cherof</span><span class="list-price">175 вон</span></div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">Sun Federation</div>
+      <div class="footer-desc">
+        Торговая Федерация Sun Federation.<br>
+        Магазин SunShield — снаряжение, ресурсы и зачарования.<br><br>
+        Основной сайт: <a href="https://chanland4.vercel.app" target="_blank">chanland4.vercel.app</a>
+      </div>
+    </div>
+    <div>
+      <h4>Магазин</h4>
+      <ul>
+        <li><a href="#shop">Снаряжение</a></li>
+        <li><a href="#enchants">Зачарования</a></li>
+        <li><a href="#resources">Ресурсы</a></li>
+        <li><a href="#potions">Зелья</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Федерация</h4>
+      <ul>
+        <li><a href="https://chanland4.vercel.app" target="_blank">Основной сайт</a></li>
+        <li><a href="#">Правила торговли</a></li>
+        <li><a href="#" onclick="openCart();return false;">Корзина</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-copy">© 2025 Sun Federation · SunShield · Все цены в вонах</div>
+</footer>
+
+<!-- 🛒 Cart Modal -->
+<div id="cartOverlay" class="modal-overlay" onclick="closeCartOnOverlay(event)">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-top">
+      <div class="modal-title">Корзина</div>
+      <button class="icon-btn" onclick="closeCart()" title="Закрыть">✕</button>
+    </div>
+
+    <div class="cart-list" id="cartList"></div>
+
+    <div class="cart-bottom">
+      <div class="total">Итого: <b><span id="cartTotal">0</span> вон</b></div>
+      <button class="remove-btn" onclick="clearCart()">Очистить</button>
+    </div>
+
+    <div class="cart-actions">
+      <button class="btn btn-dark btn-wide" onclick="closeCart()">Продолжить</button>
+      <button class="btn btn-white btn-wide" onclick="checkout()">Оформить</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ✅ Category filter (как было) */
+function filterCat(btn, cat) {
+  document.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#eq-grid .item-card').forEach(card => {
+    card.style.display = (cat === 'all' || card.dataset.cat === cat) ? '' : 'none';
+  });
+  // после фильтра — применяем поиск, если он введён
+  applySearch();
+}
+
+/* 🔎 Search (по всем карточкам, не только снаряжение) */
+const searchInput = document.getElementById('searchInput');
+searchInput.addEventListener('input', applySearch);
+
+function applySearch(){
+  const q = (searchInput.value || '').trim().toLowerCase();
+  document.querySelectorAll('.item-card').forEach(card => {
+    const name = (card.querySelector('.item-name')?.innerText || '').toLowerCase();
+    const sub  = (card.querySelector('.item-sub')?.innerText || '').toLowerCase();
+    // Важно: если в "Снаряжении" карточка уже скрыта фильтром — не раскрываем её поиском
+    // Поэтому проверяем: если это НЕ eq-grid — то просто фильтруем.
+    const isEq = card.closest('#eq-grid');
+    if(isEq){
+      // eq-grid: если фильтр скрывает (display:none) — оставляем скрытым
+      const hiddenByCat = card.style.display === 'none' && q.length > 0 ? true : false;
+      if(hiddenByCat){
+        // если уже скрыт — оставим скрытым
+        if((name + ' ' + sub).includes(q)) {
+          // но если скрытие было из-за поиска ранее, а не категории — ок, покажем
+          // (простой способ: если активная категория all — тогда управляет поиск)
+          const activeCat = document.querySelector('.cat-tab.active')?.innerText;
+          if(activeCat === 'Все') card.style.display = '';
+        }
+        return;
+      }
+    }
+    card.style.display = (q === '' || (name + ' ' + sub).includes(q)) ? '' : 'none';
+  });
+}
+
+/* 🛒 Cart logic */
+const CART_KEY = 'sunf_cart_v1';
+let cart = loadCart();
+
+const cartCount = document.getElementById('cartCount');
+const cartOverlay = document.getElementById('cartOverlay');
+const cartList = document.getElementById('cartList');
+const cartTotalEl = document.getElementById('cartTotal');
+
+function loadCart(){
+  try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
+  catch(e){ return []; }
+}
+function saveCart(){
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+}
+function fmt(n){
+  // без лишних нулей, но аккуратно
+  const num = Number(n || 0);
+  return Number.isInteger(num) ? String(num) : String(Math.round(num * 10) / 10);
+}
+
+function updateCartUI(){
+  cartCount.textContent = cart.length;
+
+  cartList.innerHTML = '';
+  if(cart.length === 0){
+    cartList.innerHTML = '<div style="color:#666;font-size:13px;padding:10px 2px;">Пусто. Но это временно 😼</div>';
+    cartTotalEl.textContent = '0';
+    return;
+  }
+
+  let total = 0;
+  cart.forEach((it, idx) => {
+    total += Number(it.price || 0);
+
+    const row = document.createElement('div');
+    row.className = 'cart-item';
+    row.innerHTML = `
+      <div>
+        <div class="cart-item-name">${escapeHtml(it.name)}</div>
+        <div class="cart-item-sub">${escapeHtml(it.sub || '')}</div>
+      </div>
+      <div class="cart-item-right">
+        <div class="cart-price">${fmt(it.price)} вон</div>
+        <button class="remove-btn" onclick="removeFromCart(${idx})">–</button>
+      </div>
+    `;
+    cartList.appendChild(row);
+  });
+
+  cartTotalEl.textContent = fmt(total);
+}
+
+function escapeHtml(s){
+  return String(s ?? '')
+    .replaceAll('&','&amp;')
+    .replaceAll('<','&lt;')
+    .replaceAll('>','&gt;')
+    .replaceAll('"','&quot;')
+    .replaceAll("'","&#039;");
+}
+
+function addToCart(item){
+  cart.push(item);
+  saveCart();
+  updateCartUI();
+  // маленький “пинок” приятности: меняем текст кнопки на секунду
+}
+
+function removeFromCart(index){
+  cart.splice(index,1);
+  saveCart();
+  updateCartUI();
+}
+
+function clearCart(){
+  cart = [];
+  saveCart();
+  updateCartUI();
+}
+
+function openCart(){
+  cartOverlay.style.display = 'flex';
+  updateCartUI();
+}
+
+function closeCart(){
+  cartOverlay.style.display = 'none';
+}
+
+function closeCartOnOverlay(e){
+  if(e.target === cartOverlay) closeCart();
+}
+
+function checkout(){
+  // пока без бекенда — просто показываем итог
+  const total = cartTotalEl.textContent;
+  alert('Заявка на покупку оформлена ✅\\nИтого: ' + total + ' вон\\n\\nДальше можно прикрутить отправку в Discord/Telegram или форму.');
+  closeCart();
+}
+
+/* привязка кнопок “В корзину” */
+document.querySelectorAll('.item-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const name = btn.dataset.name || btn.closest('.item-card')?.querySelector('.item-name')?.innerText || 'Товар';
+    const sub  = btn.dataset.sub  || btn.closest('.item-card')?.querySelector('.item-sub')?.innerText  || '';
+    const price = btn.dataset.price || 0;
+
+    addToCart({ name, sub, price });
+
+    const old = btn.textContent;
+    btn.textContent = 'Добавлено ✓';
+    btn.style.background = '#fff';
+    btn.style.color = '#000';
+    btn.style.borderColor = '#fff';
+    setTimeout(() => {
+      btn.textContent = old;
+      btn.removeAttribute('style');
+    }, 800);
+  });
+});
+
+updateCartUI();
+
+/* 🌠 Falling stars canvas */
+const canvas = document.getElementById('starsCanvas');
+const ctx = canvas.getContext('2d', { alpha: true });
+
+let W, H, dpr;
+function resize(){
+  dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+  W = canvas.clientWidth;
+  H = canvas.clientHeight;
+  canvas.width = Math.floor(W * dpr);
+  canvas.height = Math.floor(H * dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+window.addEventListener('resize', resize);
+resize();
+
+const stars = [];
+const MAX = 70;
+
+function rand(a,b){ return a + Math.random()*(b-a); }
+
+function spawnStar(){
+  // старт сверху/слева, летит по диагонали вниз-вправо
+  const fromLeft = Math.random() < 0.35;
+  const x = fromLeft ? -rand(0, 200) : rand(0, W);
+  const y = fromLeft ? rand(0, H*0.5) : -rand(0, 200);
+
+  const speed = rand(2.2, 5.2);
+  const len = rand(60, 140);
+  const alpha = rand(0.10, 0.30);
+
+  stars.push({
+    x, y,
+    vx: speed * rand(0.9, 1.3),
+    vy: speed * rand(0.9, 1.3),
+    len,
+    a: alpha,
+    w: rand(1, 2),
+  });
+}
+
+for(let i=0;i<MAX;i++){
+  spawnStar();
+  stars[i].x = rand(0, W);
+  stars[i].y = rand(0, H);
+}
+
+function tick(){
+  ctx.clearRect(0,0,W,H);
+
+  // faint “dust”
+  for(let i=0;i<40;i++){
+    ctx.globalAlpha = 0.04;
+    ctx.beginPath();
+    ctx.arc(rand(0,W), rand(0,H), rand(0.6, 1.4), 0, Math.PI*2);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+  }
+
+  stars.forEach(s => {
+    s.x += s.vx;
+    s.y += s.vy;
+
+    // draw streak
+    ctx.globalAlpha = s.a;
+    ctx.lineWidth = s.w;
+    const x2 = s.x - s.len * 0.9;
+    const y2 = s.y - s.len * 0.9;
+
+    const grad = ctx.createLinearGradient(s.x, s.y, x2, y2);
+    grad.addColorStop(0, 'rgba(255,255,255,1)');
+    grad.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.strokeStyle = grad;
+
+    ctx.beginPath();
+    ctx.moveTo(s.x, s.y);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+
+    // respawn when off screen
+    if(s.x > W + 220 || s.y > H + 220){
+      s.x = Math.random() < 0.35 ? -rand(0,200) : rand(0,W);
+      s.y = s.x < 0 ? rand(0, H*0.5) : -rand(0,200);
+      s.vx = rand(2.2, 5.2) * rand(0.9, 1.3);
+      s.vy = rand(2.2, 5.2) * rand(0.9, 1.3);
+      s.len = rand(60, 140);
+      s.a = rand(0.10, 0.30);
+      s.w = rand(1, 2);
+    }
+  });
+
+  requestAnimationFrame(tick);
+}
+tick();
+</script>
+</body>
+</html>
