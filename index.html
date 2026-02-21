@@ -1223,6 +1223,23 @@
 </div>
 
 <script>
+  const toggle = document.getElementById('themeToggle');
+const starsCanvas = document.getElementById('starsCanvas');
+
+if(localStorage.getItem('cosmic') === 'off'){
+  toggle.checked = true;
+  starsCanvas.style.display = 'none';
+}
+
+toggle.addEventListener('change', () => {
+  if(toggle.checked){
+    starsCanvas.style.display = 'none';
+    localStorage.setItem('cosmic','off');
+  } else {
+    starsCanvas.style.display = 'block';
+    localStorage.setItem('cosmic','on');
+  }
+});
 /* ✅ Category filter (как было) */
 function filterCat(btn, cat) {
   document.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active'));
@@ -1484,22 +1501,5 @@ function tick(){
 }
 tick();
 </script>
- const toggle = document.getElementById('themeToggle');
-const starsCanvas = document.getElementById('starsCanvas');
-
-if(localStorage.getItem('cosmic') === 'off'){
-  toggle.checked = true;
-  starsCanvas.style.display = 'none';
-}
-
-toggle.addEventListener('change', () => {
-  if(toggle.checked){
-    starsCanvas.style.display = 'none';
-    localStorage.setItem('cosmic','off');
-  } else {
-    starsCanvas.style.display = 'block';
-    localStorage.setItem('cosmic','on');
-  }
-});
 </body>
 </html>
