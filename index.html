@@ -48,13 +48,15 @@
   width:28px;
   height:28px;
   border-radius:50%;
-  background:linear-gradient(145deg,#020421,#121212);
+  background: radial-gradient(circle at 30% 30%, #ffffff, #c8e6ff 40%, #6aa9ff 70%, #2b3fff 100%);
   display:flex;
   align-items:center;
   justify-content:center;
   font-size:14px;
   transition:all .45s cubic-bezier(.68,-0.55,.27,1.55);
-  box-shadow:0 0 15px rgba(255,255,255,0.25);
+  box-shadow:
+    0 0 12px rgba(120,180,255,0.6),
+    0 0 25px rgba(60,120,255,0.4);
 }
 
 .thumb-icon {
